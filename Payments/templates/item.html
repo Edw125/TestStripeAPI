@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+{% csrf_token %}
+<html>
+
+  <head>
+    <title>Buy Item {{ item.name }}</title>
+  </head>
+  <body>
+    <h1>Item {{ item.name }}</h1>
+    <p>Description of Item {{ item.name }}</p>
+    <p>{{ item.description }}</p>
+    <button id="buy-button">Buy</button>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script type="text/javascript">
+      var stripe = Stripe('{{ stripe_pub_key }}');
+      var buyButton = document.getElementById('buy-button');
+      buyButton.addEventListener('click', function() {
+        fetch('/buy/{{ item_id }}/', {method: 'GET'})
+        .then(response => { return response.json() })
+        .then(session => { stripe.redirectToCheckout({ sessionId: session.id }) })
+      });
+    </script>
+  </body>
+</html>
